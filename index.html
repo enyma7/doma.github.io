@@ -1513,11 +1513,20 @@ Press any key to return to the illusion...
                     </div>
                 `;
                 
-                setTimeout(() => {
-                    if (confirm('You have seen behind the curtain. Would you like to return to the Department?')) {
+                // Add keypress listener to return
+                const returnHandler = function(e) {
+                    if (confirm('You have seen behind the curtain. Would you like to return to the illusion?')) {
+                        document.removeEventListener('keydown', returnHandler);
                         location.reload();
+                    } else {
+                        document.removeEventListener('keydown', returnHandler);
+                        alert('You chose to stay in the truth.\n\nBrave. Or foolish.\n\nProbably both.\n\nRefresh the page when ready to return.');
                     }
-                }, 5000);
+                };
+                
+                setTimeout(() => {
+                    document.addEventListener('keydown', returnHandler);
+                }, 2000);
             }
             
             // Alt+M for hidden panel
