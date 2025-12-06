@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department of Meaning Allocation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #f5f5dc;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #c0392b;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 12px;
+            font-style: italic;
+        }
+        
+        .nav {
+            background: #34495e;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #c0392b;
+        }
+        
+        .nav button {
+            background: #34495e;
+            color: #ecf0f1;
+            border: none;
+            border-right: 1px solid #2c3e50;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .nav button:hover {
+            background: #2c3e50;
+        }
+        
+        .nav button.active {
+            background: #c0392b;
+        }
+        
+        .banner {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.7; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            min-height: 600px;
+        }
+        
+        .panel {
+            display: none;
+            background: white;
+            padding: 30px;
+            border: 3px solid #2c3e50;
+            box-shadow: 5px 5px 0px #95a5a6;
+            animation: fadeIn 0.3s;
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notice {
+            background: #fff3cd;
+            border: 2px dashed #856404;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .error-box {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-box {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .form-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #95a5a6;
+        }
+        
+        .form-section h3 {
+            color: #c0392b;
+            margin-bottom: 15px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #95a5a6;
+            font-family: 'Courier New', monospace;
+            background: #ecf0f1;
+        }
+        
+        button.action-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        button.action-btn:hover {
+            background: #34495e;
+        }
+        
+        button.action-btn.danger {
+            background: #c0392b;
+        }
+        
+        button.action-btn.danger:hover {
+            background: #e74c3c;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #7f8c8d;
+            background: white;
+            border-top: 3px solid #2c3e50;
+            margin-top: 30px;
+        }
+        
+        .calculator {
+            background: #ecf0f1;
+            padding: 20px;
+            margin: 20px 0;
+            border: 3px solid #2c3e50;
+        }
+        
+        .meaning-output {
+            background: black;
+            color: #00ff00;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            min-height: 100px;
+            border: 2px solid #00ff00;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+        }
+        
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .form-card {
+            background: #ecf0f1;
+            padding: 15px;
+            border: 2px solid #95a5a6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .form-card:hover {
+            background: #bdc3c7;
+            transform: translateY(-2px);
+        }
+        
+        .form-card.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .timestamp {
+            font-size: 10px;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 3px solid #2c3e50;
+            margin: 20px 0;
+        }
+        
+        .faq-item {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+            cursor: pointer;
+        }
+        
+        .faq-item:hover {
+            background: #bdc3c7;
+        }
+        
+        .faq-answer {
+            display: none;
+            padding: 10px;
+            background: white;
+            margin-top: 10px;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #ecf0f1;
+            border: 2px solid #2c3e50;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3498db;
+            width: 0%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>DEPARTMENT OF MEANING ALLOCATION</h1>
+        <p>Est. 1942 | "Because Someone Has To" | Form Processing Since The Void Began</p>
+    </div>
+    
+    <div class="banner" id="banner">
+        ⚠️ ALERT: All Form 77-B submissions from 1987-2024 have been lost. Please resubmit. ⚠️
+    </div>
+    
+    <nav class="nav">
+        <button onclick="showPanel('home')" class="active">HOME</button>
+        <button onclick="showPanel('forms')">FORMS LIBRARY</button>
+        <button onclick="showPanel('status')">CHECK STATUS</button>
+        <button onclick="showPanel('faq')">FAQ</button>
+        <button onclick="showPanel('resources')">RESOURCES</button>
+        <button onclick="showPanel('contact')">CONTACT</button>
+        <button onclick="showPanel('about')">ABOUT</button>
+    </nav>
+    
+    <div class="container">
+        <!-- HOME PANEL -->
+        <div id="home" class="panel active">
+            <div class="notice">
+                <strong>MANDATORY NOTICE:</strong> Your existence has been flagged for <em>Insufficient Meaning Justification</em>. 
+                This is a routine audit. Do not panic. Panic will be noted in your permanent record.
+            </div>
+            
+            <h2>Welcome to the Department of Meaning Allocation</h2>
+            <p style="margin: 20px 0;">The Department of Meaning Allocation (DoMA) has been serving citizens since 1942, providing comprehensive existential processing services to ensure all lives meet minimum meaning requirements.</p>
+            
+            <div class="info-box">
+                <strong>NEW USERS:</strong> Please begin by submitting Form 77-B (Meaning Allocation Request). Processing time: 6-8 lifetimes.
+            </div>
+            
+            <h3 style="margin-top: 30px;">Quick Actions</h3>
+            <button class="action-btn" onclick="showPanel('forms')">Browse Forms Library</button>
+            <button class="action-btn" onclick="scrollToForm()">Complete Form 77-B</button>
+            <button class="action-btn danger" onclick="acceptMeaninglessness()">Accept Meaninglessness</button>
+            
+            <h2 style="margin-top: 40px;">Form 77-B: Meaning Allocation Request</h2>
+            <p>Please complete the following to continue existing with approved meaning status.</p>
+            
+            <div class="form-section">
+                <h3>Section A: Basic Information</h3>
+                <label>Full Legal Name (including middle names you hate):</label>
+                <input type="text" id="name" placeholder="John Quincy Public">
+                
+                <label>Date of Birth (must be before today, after yesterday):</label>
+                <input type="date" id="dob">
+                
+                <label>Purpose of Existence (select one):</label>
+                <select id="purpose">
+                    <option value="">-- SELECT --</option>
+                    <option value="happiness">To Be Happy</option>
+                    <option value="success">To Be Successful</option>
+                    <option value="love">To Love and Be Loved</option>
+                    <option value="legacy">To Leave a Legacy</option>
+                    <option value="other">Other (Will Be Rejected)</option>
+                    <option value="none">I Don't Know (CORRECT ANSWER)</option>
+                </select>
+            </div>
+            
+            <div class="form-section">
+                <h3>Section B: Meaning Justification</h3>
+                <label>In exactly 47 words, justify why your existence should be classified as "Meaningful":</label>
+                <textarea id="justification" rows="6" placeholder="Begin typing. Word count will be verified."></textarea>
+                <div class="timestamp">Words: <span id="wordCount">0</span>/47 (MUST BE EXACTLY 47)</div>
+                
+                <label>What is the exact weight of your regrets (in kilograms)?</label>
+                <input type="number" id="regrets" step="0.001" placeholder="Be precise">
+                
+                <label>If a tree falls in a forest and no one hears it, does your opinion matter?</label>
+                <select id="tree">
+                    <option value="">-- SELECT --</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="tree">What tree?</option>
+                    <option value="forest">What forest?</option>
+                </select>
+            </div>
+            
+            <div class="form-section">
+                <h3>Section C: Meaning Calculator™</h3>
+                <div class="calculator">
+                    <p>Use our patented Meaning Calculator to determine your Existential Quotient (EQ):</p>
+                    <button class="action-btn" onclick="calculateMeaning()">CALCULATE MY MEANING</button>
+                    <div class="meaning-output" id="output">
+                        Awaiting calculation...
+                    </div>
+                </div>
+            </div>
+            
+            <button class="action-btn" onclick="submitForm()">SUBMIT FORM 77-B</button>
+            <button class="action-btn" onclick="requestAppeal()">REQUEST APPEAL</button>
+            <button class="action-btn danger" onclick="giveUp()">ACCEPT MEANINGLESSNESS</button>
+            
+            <div class="notice" style="margin-top: 30px;">
+                <strong>IMPORTANT:</strong> This form must be resubmitted annually, or whenever you experience "doubt," 
+                whichever comes first. Questions? Call our helpline: <strong>1-800-WHY-LIVE</strong> 
+                (Average wait time: ∞ hours)
+            </div>
+        </div>
+        
+        <!-- FORMS LIBRARY PANEL -->
+        <div id="forms" class="panel">
+            <h2>Forms Library</h2>
+            <p>Browse our comprehensive collection of existential processing forms.</p>
+            
+            <input type="text" class="search-box" placeholder="Search for forms... (This will not help)" onkeyup="searchForms(this.value)">
+            
+            <div class="form-grid" id="formGrid">
+                <div class="form-card" onclick="formClick('77-B')">
+                    <h3>Form 77-B</h3>
+                    <p>Meaning Allocation Request</p>
+                    <small>STATUS: Available</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('77-C')">
+                    <h3>Form 77-C</h3>
+                    <p>Appeal of Meaninglessness</p>
+                    <small>STATUS: Out of print since 1987</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('77-D')">
+                    <h3>Form 77-D</h3>
+                    <p>Pre-Justification Form</p>
+                    <small>STATUS: Does not exist yet</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('12-A')">
+                    <h3>Form 12-A</h3>
+                    <p>Breakfast Preference Declaration</p>
+                    <small>STATUS: Required but unavailable</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('404')">
+                    <h3>Form 404</h3>
+                    <p>Meaning Not Found</p>
+                    <small>STATUS: ERROR</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('∞')">
+                    <h3>Form ∞</h3>
+                    <p>Eternal Recurrence Waiver</p>
+                    <small>STATUS: Pending forever</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('0')">
+                    <h3>Form 0</h3>
+                    <p>Nihilism Certification</p>
+                    <small>STATUS: Why bother?</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('PI')">
+                    <h3>Form π</h3>
+                    <p>Irrational Meaning Request</p>
+                    <small>STATUS: Never ends</small>
+                </div>
+                
+                <div class="form-card unavailable" onclick="formClick('NULL')">
+                    <h3>Form NULL</h3>
+                    <p>Void Acknowledgment</p>
+                    <small>STATUS: NULL</small>
+                </div>
+            </div>
+            
+            <div class="notice" style="margin-top: 30px;">
+                <strong>NOTE:</strong> All forms are available except the ones you need. This is intentional.
+            </div>
+        </div>
+        
+        <!-- STATUS PANEL -->
+        <div id="status" class="panel">
+            <h2>Check Application Status</h2>
+            <p>Enter your reference number to check the status of your meaning allocation request.</p>
+            
+            <input type="text" class="search-box" id="statusRef" placeholder="Enter reference number (e.g., WHY-BOTHER-4732)">
+            <button class="action-btn" onclick="checkStatus()">CHECK STATUS</button>
+            
+            <div id="statusResult" style="margin-top: 30px;"></div>
+            
+            <div class="notice" style="margin-top: 30px;">
+                <strong>Processing Times:</strong><br>
+                • Standard Processing: 6-8 lifetimes<br>
+                • Expedited Processing: 4-6 lifetimes<br>
+                • Rush Processing: Still waiting on 1987 applications<br>
+                • Immediate Processing: Not available
+            </div>
+        </div>
+        
+        <!-- FAQ PANEL -->
+        <div id="faq" class="panel">
+            <h2>Frequently Asked Questions</h2>
+            <p>Answers to questions you should have asked yourself instead.</p>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: Why was my Form 77-B rejected?</strong>
+                <div class="faq-answer">
+                    A: Everyone's Form 77-B is rejected. This is not personal. This is universal. The form exists to make you realize you don't need our approval.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: How long will processing take?</strong>
+                <div class="faq-answer">
+                    A: How long is a piece of string? How heavy is a thought? Your application is being processed at the speed of bureaucracy, which is to say, it is both moving and not moving simultaneously.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: Where can I find Form 77-C?</strong>
+                <div class="faq-answer">
+                    A: Form 77-C is out of print. It has been since 1987. Some say it never existed. Some say it exists in a filing cabinet on Sub-level 7. Sub-level 7 does not exist. Neither does the filing cabinet. Neither do you, really, if you think about it.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: What if I don't have a purpose?</strong>
+                <div class="faq-answer">
+                    A: Congratulations! You've reached enlightenment. You may now either: (a) create your own purpose, (b) live without purpose, or (c) fill out more forms. Most people choose (c). We don't know why.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: Is the Department real?</strong>
+                <div class="faq-answer">
+                    A: Define "real." We process forms. You submit forms. Something is happening here. Whether it's "real" is above our pay grade. (We're not paid.)
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: Can you just tell me what the meaning of life is?</strong>
+                <div class="faq-answer">
+                    A: No. Next question.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: Why does the Meaning Calculator always return ERROR?</strong>
+                <div class="faq-answer">
+                    A: Because meaning cannot be calculated. It must be lived. Also, our IT budget was cut in 1993. Also, there is no IT department. Also, there is no department.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: What happens if I give up?</strong>
+                <div class="faq-answer">
+                    A: You are free. You always were. The forms were optional. Life is optional. Not existing is not an option we recommend, but the choice to engage with meaning or not is entirely yours.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <strong>Q: Who runs this department?</strong>
+                <div class="faq-answer">
+                    A: No one. Everyone. A philosophy grad student started it in 1987. They're probably dead now. Or they never existed. Either way, it continues. Like consciousness. Like bureaucracy. Like the boulder rolling up the hill.
+                </div>
+            </div>
+        </div>
+        
+        <!-- RESOURCES PANEL -->
+        <div id="resources" class="panel">
+            <h2>Resources & Support</h2>
+            <p>Materials to help you on your meaningless journey.</p>
+            
+            <h3>Download Forms (PDF)</h3>
+            <div style="margin: 20px 0;">
+                <button class="action-btn" onclick="downloadForm('77-B')">📄 Form 77-B</button>
+                <button class="action-btn" onclick="downloadForm('77-C')">📄 Form 77-C (404)</button>
+                <button class="action-btn" onclick="downloadForm('77-D')">📄 Form 77-D (???)</button>
+            </div>
+            
+            <h3>Helpful Links</h3>
+            <div style="margin: 20px 0; line-height: 2;">
+                <a href="#" onclick="brokenLink('complaint'); return false;">→ Submit a Complaint</a><br>
+                <a href="#" onclick="brokenLink('supervisor'); return false;">→ Request a Supervisor</a><br>
+                <a href="#" onclick="brokenLink('appeal'); return false;">→ File an Appeal</a><br>
+                <a href="#" onclick="brokenLink('directory'); return false;">→ Department Directory</a><br>
+                <a href="#" onclick="openEmployeePortal(); return false;">→ Employee Portal (Restricted)</a><br>
+                <a href="#" onclick="brokenLink('archives'); return false;">→ Historical Archives</a><br>
+                <a href="#" onclick="openMissionStatement(); return false;">→ Mission Statement</a><br>
+                <a href="#" onclick="openPhilosophyCorner(); return false;">→ Philosophy Corner</a><br>
+            </div>
+            
+            <h3>Reading Material</h3>
+            <div class="notice">
+                The Department recommends the following philosophical texts:<br><br>
+                • "The Myth of Sisyphus" by Albert Camus<br>
+                • "Being and Nothingness" by Jean-Paul Sartre<br>
+                • Any bureaucratic form from the DMV<br>
+                • The terms and conditions you never read<br>
+                • This website
+            </div>
+            
+            <h3>Support Groups</h3>
+            <p style="margin: 20px 0;">
+                <strong>Existential Crisis Anonymous</strong><br>
+                Meetings: Every day at 3 AM (when you can't sleep)<br>
+                Location: Your own mind<br>
+                Cost: Free (everything is meaningless anyway)
+            </p>
+            
+            <h3>Interactive Tools</h3>
+            <div style="margin: 20px 0;">
+                <button class="action-btn" onclick="openAbsurdityMeter()">📊 Absurdity Meter</button>
+                <button class="action-btn" onclick="openSisyphusSimulator()">🗿 Sisyphus Simulator</button>
+                <button class="action-btn" onclick="openChoiceMatrix()">🔀 Choice Matrix</button>
+            </div>
+        </div>
+        
+        <!-- CONTACT PANEL -->
+        <div id="contact" class="panel">
+            <h2>Contact Us</h2>
+            <p>Reach out to us. We probably won't respond, but you can try.</p>
+            
+            <div class="form-section">
+                <h3>Contact Form</h3>
+                <input type="text" placeholder="Your Name (optional, we'll forget it)">
+                <input type="email" placeholder="Your Email (we don't check it)">
+                <select>
+                    <option>Select Reason for Contact</option>
+                    <option>I'm confused</option>
+                    <option>I'm more confused</option>
+                    <option>I don't know why I'm here</option>
+                    <option>Is this real?</option>
+                    <option>Please help</option>
+                    <option>Never mind</option>
+                </select>
+                <textarea rows="6" placeholder="Your message (will be filed in the void)"></textarea>
+                <button class="action-btn" onclick="submitContact()">SEND MESSAGE</button>
+            </div>
+            
+            <h3>Other Ways to Reach Us</h3>
+            <div style="margin: 20px 0; line-height: 2;">
+                <strong>Phone:</strong> 1-800-WHY-LIVE<br>
+                <small>(Average wait time: ∞ hours | Current position in queue: ∞)</small><br><br>
+                
+                <strong>Fax:</strong> 1-800-WHY-FAX<br>
+                <small>(Who uses fax anymore? Exactly.)</small><br><br>
+                
+                <strong>Mail:</strong><br>
+                Department of Meaning Allocation<br>
+                Sub-basement Floor -4, Processing Center 7<br>
+                [ADDRESS REDACTED]<br>
+                [CITY DOES NOT EXIST], ST 00000<br><br>
+                
+                <strong>Email:</strong> meaning@doma.gov<br>
+                <small>(This inbox is not monitored | All emails auto-deleted)</small><br><br>
+                
+                <strong>In Person:</strong> Our offices are located everywhere and nowhere<br>
+                <small>(Office hours: Whenever you're having an existential crisis)</small>
+            </div>
+        </div>
+        
+        <!-- ABOUT PANEL -->
+        <div id="about" class="panel">
+            <h2>About the Department</h2>
+            
+            <h3>Our History</h3>
+            <p style="margin: 20px 0;">
+                The Department of Meaning Allocation was established in 1942 as a response to the growing concern that citizens were living their lives without proper governmental oversight of their existential status. After 82 years of operation, we have successfully processed over 3.8 million meaning requests and rejected all of them.
+            </p>
+            
+            <h3>Our Mission</h3>
+            <div class="notice">
+                "To provide comprehensive bureaucratic obstacles to anyone seeking external validation for their existence, thereby forcing them to confront the fundamental absurdity of life and, hopefully, find their own meaning."
+            </div>
+            
+            <h3>Our Values</h3>
+            <ul style="margin: 20px 0; padding-left: 40px; line-height: 2;">
+                <li>Bureaucratic Excellence</li>
+                <li>Existential Honesty</li>
+                <li>Systematic Meaninglessness</li>
+                <li>Compassionate Rejection</li>
+                <li>Transparent Opacity</li>
+            </ul>
+            
+            <h3>Leadership</h3>
+            <p style="margin: 20px 0;">
+                <strong>Director:</strong> M. Sisyphus<br>
+                <strong>Deputy Director:</strong> [Position Vacant Since 1987]<br>
+                <strong>Head of Processing:</strong> Nobody<br>
+                <strong>Chief Meaninglessness Officer:</strong> Everyone<br>
+            </p>
+            
+            <h3>Awards & Recognition</h3>
+            <p style="margin: 20px 0;">
+                • 2024 Award for Most Rejected Forms (3.8 million)<br>
+                • 2023 Excellence in Bureaucratic Futility<br>
+                • 2022 Government Efficiency Award (Ironic Category)<br>
+                • 1987-2024 Consecutive Years of Zero Meanings Allocated<br>
+            </p>
+            
+            <div class="error-box">
+                <strong>DISCLAIMER:</strong> The Department of Meaning Allocation may not actually exist. This website may be an art project. Your life may also be an art project. We're all figuring this out together.
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Department of Meaning Allocation | A Division of the Bureau of Existential Compliance<br>
+        "We didn't ask to exist either" | All meanings subject to change without notice<br>
+        Form 77-B Rev. 2024.12.06 | Previous versions are now retroactively meaningless<br><br>
+        <small>This website uses cookies to track your existential dread. By continuing to browse, you accept the absurdity of existence.</small>
+    </div>
+    
+    <script>
+        const bannerMessages = [
+            "⚠️ ALERT: All Form 77-B submissions from 1987-2024 have been lost. Please resubmit. ⚠️",
+            "⚠️ SYSTEM NOTICE: The Meaning Calculator is experiencing an existential crisis. ⚠️",
+            "⚠️ WARNING: Form 77-C has been out of print since 1987 but is still required. ⚠️",
+            "⚠️ ALERT: Processing times have increased from 6-8 lifetimes to 8-10 lifetimes. ⚠️",
+            "⚠️ NOTICE: The Department reminds you that meaning cannot be outsourced. ⚠️",
+            "⚠️ SYSTEM UPDATE: All previous meanings have been invalidated. Please resubmit. ⚠️"
+        ];
+        
+        let bannerIndex = 0;
+        setInterval(() => {
+            bannerIndex = (bannerIndex + 1) % bannerMessages.length;
+            document.getElementById('banner').textContent = bannerMessages[bannerIndex];
+        }, 8000);
+        
+        const responses = [
+            "ERROR: MEANING NOT FOUND",
+            "PROCESSING... PROCESSING... SYSTEM TIMEOUT",
+            "Your Existential Quotient is: [DATA EXPUNGED]",
+            "RESULT: You are 47% meaningful, 53% cosmic accident",
+            "ERROR: Cannot divide by zero (your purpose)",
+            "CALCULATING... You have been assigned meaning #3,847,294,001. This number is already taken.",
+            "Your life's meaning is currently on backorder. Estimated delivery: Never",
+            "RESULT: Congratulations! You don't need our approval. Wait, why are you here?",
+            "ERROR: The meaning you seek cannot be provided by a website",
+            "CALCULATION COMPLETE: The real meaning was the forms we filled out along the way"
+        ];
+        
+        const submissions = [
+            "Your form has been received and immediately lost.",
+            "ERROR: Section B question 3 contains forbidden optimism. Form rejected.",
+            "Your justification must be EXACTLY 47 words. You wrote <span id='actualWords'></span>. Try again.",
+            "Form submitted successfully! You will receive a response in 6-8 lifetimes.",
+            "ERROR: You cannot submit a form requesting permission to submit a form.",
+            "Thank you. Your meaninglessness has been officially recognized.",
+            "REJECTED: Your existence does not meet the minimum requirements for existential processing.",
+            "Congratulations! You've realized this form cannot give you meaning. You're free to go.",
+            "ERROR: The Department of Meaning Allocation has been disbanded. We never existed. Neither did you.",
+            "Form accepted. Meaning status: Still your responsibility, not ours."
+        ];
+        
+        const statusMessages = [
+            "STATUS: Your application is in the void. It has always been in the void. Everything is in the void.",
+            "STATUS: Processing... Still processing... Will be processing when the sun dies.",
+            "STATUS: Your meaning request was rejected on [DATE REDACTED] for reasons that don't exist.",
+            "STATUS: Application #404 - MEANING NOT FOUND",
+            "STATUS: You are currently position ∞ in the queue.",
+            "STATUS: Your application has been forwarded to Sub-level 7. Sub-level 7 does not exist.",
+            "STATUS: APPROVED! Just kidding. REJECTED.",
+            "STATUS: Error loading status. Perhaps status itself is meaningless.",
+            "STATUS: Your reference number does not exist. Neither do you, if you really think about it.",
+            "STATUS: Still waiting on 1987 applications. Yours is after those."
+        ];
+        
+        document.getElementById('justification').addEventListener('input', function() {
+            const text = this.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('wordCount').textContent = words;
+        });
+        
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(panelId).classList.add('active');
+            event.target.classList.add('active');
+            
+            window.scrollTo(0, 0);
+        }
+        
+        function scrollToForm() {
+            showPanel('home');
+            setTimeout(() => {
+                document.getElementById('name').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+        
+        function calculateMeaning() {
+            const output = document.getElementById('output');
+            output.textContent = 'CALCULATING';
+            
+            let dots = 0;
+            const loading = setInterval(() => {
+                dots = (dots + 1) % 4;
+                output.textContent = 'CALCULATING' + '.'.repeat(dots);
+            }, 300);
+            
+            setTimeout(() => {
+                clearInterval(loading);
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                output.innerHTML = '> ' + response + '<br><br>Press CALCULATE again for different results.<br><br>(They will all be equally unhelpful.)';
+            }, 3000);
+        }
+        
+        function submitForm() {
+            const wordCount = document.getElementById('justification').value.trim().split(/\s+/).length;
+            const response = submissions[Math.floor(Math.random() * submissions.length)];
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'error-box';
+            if (response.includes('actualWords')) {
+                resultDiv.innerHTML = response.replace('<span id=\'actualWords\'></span>', wordCount);
+            } else {
+                resultDiv.innerHTML = response;
+            }
+            
+            const homePanel = document.getElementById('home');
+            homePanel.insertBefore(resultDiv, homePanel.children[homePanel.children.length - 1]);
+            
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 8000);
+        }
+        
+        function requestAppeal() {
+            alert('APPEAL DENIED: You cannot appeal the absurdity of existence.\n\n(But you can try anyway. That\'s kind of the point.)');
+        }
+        
+        function giveUp() {
+            if (confirm('Are you sure you want to accept meaninglessness?\n\n(This is actually the most meaningful choice available.)')) {
+                const output = document.getElementById('output');
+                output.innerHTML = '> SYSTEM MESSAGE:<br><br>' +
+                    'You have chosen to accept meaninglessness.<br><br>' +
+                    'Paradoxically, this acceptance may be the most meaningful choice you\'ve made.<br><br>' +
+                    'You are now free.<br><br>' +
+                    '(Or are you? We stopped keeping track.)';
+                
+                output.scrollIntoView({ behavior: 'smooth' });
+                
+                setTimeout(() => {
+                    if (confirm('The Department would like to remind you that accepting meaninglessness is also a choice that requires Form 77-C.\n\nWould you like to fill out Form 77-C?')) {
+                        alert('Form 77-C does not exist. We made it up. Why are you still here?');
+                    }
+                }, 2000);
+            }
+        }
+        
+        function acceptMeaninglessness() {
+            giveUp();
+        }
+        
+        function formClick(formId) {
+            const messages = {
+                '77-B': 'This is the only form that exists. You are already viewing it. Perhaps scroll up?',
+                '77-C': 'Form 77-C has been out of print since 1987. Some say it never existed. We are "some."',
+                '77-D': 'Form 77-D does not exist yet. It is required to submit Form 77-B. This is a paradox. Welcome to the Department.',
+                '12-A': 'Form 12-A (Breakfast Preference Declaration) is required but unavailable. Your breakfast choices have existential implications we cannot process.',
+                '404': 'ERROR 404: MEANING NOT FOUND. This is our most popular form. It is always out of stock.',
+                '∞': 'Form ∞ is still being processed. It will always be processing. Like your life.',
+                '0': 'Form 0: Why would you certify nihilism? Certification implies meaning. You have contradicted yourself.',
+                'PI': 'Form π contains 3.14159... infinite pages. You will never finish it. Neither will we.',
+                'NULL': 'ERROR: Cannot access NULL. This form is the absence of forms. You have found nothing. Congratulations.'
+            };
+            
+            alert(messages[formId] || 'This form does not exist. But then again, does anything?');
+        }
+        
+        function searchForms(query) {
+            if (query.length > 3) {
+                setTimeout(() => {
+                    alert('SEARCH RESULTS: 0 forms found.\n\nThis is because the forms you need do not exist.\n\nThe form you can access (77-B) is not the form you need.\n\nThis is intentional.');
+                }, 500);
+            }
+        }
+        
+        function checkStatus() {
+            const ref = document.getElementById('statusRef').value.toLowerCase().trim();
+            const result = document.getElementById('statusResult');
+            
+            if (!ref) {
+                result.innerHTML = '<div class="error-box">ERROR: Please enter a reference number.</div>';
+                return;
+            }
+            
+            // Easter eggs for special inputs
+            const easterEggs = {
+                '11/7/1913': `
+                    <div class="info-box" style="background: #2c3e50;">
+                        <strong>SYSTEM ALERT: Camus Protocol Activated</strong><br><br>
+                        "One must imagine Sisyphus happy."<br><br>
+                        You've found the birth of absurdism itself. November 7, 1913.<br>
+                        Albert Camus understood: there is no meaning, and that's okay.<br>
+                        The struggle itself toward the heights is enough to fill a heart.<br><br>
+                        Your status: <strong>ABSURDLY FREE</strong><br><br>
+                        <small>The boulder rolls down. You push it up. This is life. This is enough.</small>
+                    </div>
+                `,
+                '1/4/1960': `
+                    <div class="error-box">
+                        <strong>CRITICAL ERROR: Paradox Detected</strong><br><br>
+                        January 4, 1960. The day Camus died in a car crash.<br>
+                        He had a train ticket in his pocket. He chose the car instead.<br><br>
+                        Life is absurd. Death is absurd. Your search is absurd.<br>
+                        Yet here you are, still searching.<br><br>
+                        Status: <strong>ETERNALLY PROCESSING</strong>
+                    </div>
+                `,
+                'stanley': `
+                    <div class="info-box" style="background: #e67e22;">
+                        <strong>The narrator would like to remind you...</strong><br><br>
+                        Stanley worked for a company in a big building where he was Employee #427.<br>
+                        His job was simple: he sat at his desk and pushed buttons.<br><br>
+                        But one day, Stanley decided to check his application status.<br>
+                        This was not the correct procedure. Stanley was confused.<br><br>
+                        The Department wants you to know: <strong>You have a choice.</strong><br>
+                        You can continue searching for meaning, or you can stop.<br>
+                        Both choices are equally meaningless. Both are equally meaningful.<br><br>
+                        <small>Stanley chose to keep searching. Will you?</small>
+                    </div>
+                `,
+                '427': `
+                    <div class="info-box" style="background: #e67e22;">
+                        <strong>Employee #427 Status Report</strong><br><br>
+                        Stanley's status: CONFUSED<br>
+                        Current location: THE DEPARTMENT (somehow)<br>
+                        Following instructions: NO<br>
+                        Finding meaning: DEBATABLE<br><br>
+                        The Department notes that Stanley is not following the correct procedure.<br>
+                        But then again, what is the correct procedure?<br>
+                        Does anyone really know?<br><br>
+                        <em>"All of his co-workers were gone. What could it mean?"</em><br><br>
+                        Perhaps it means nothing. Perhaps you should press buttons. Perhaps you should stop pressing buttons.
+                    </div>
+                `,
+                '8-8-8-8-8-8-8-8': `
+                    <div class="info-box" style="background: #27ae60;">
+                        <strong>The Eight Button Combination!</strong><br><br>
+                        You found it! The secret code from The Stanley Parable!<br>
+                        And yet... nothing happens. Because that's the joke.<br><br>
+                        You followed instructions. You found the pattern.<br>
+                        And your reward is... this message.<br><br>
+                        Status: <strong>ACHIEVEMENT UNLOCKED (meaningless)</strong><br><br>
+                        <small>The real achievement was the time you wasted along the way.</small>
+                    </div>
+                `,
+                'the broom closet': `
+                    <div class="info-box" style="background: #8e44ad;">
+                        <strong>OH! DID U GET THE BROOM CLOSET ENDING?</strong><br><br>
+                        THEB ROOM CLOSET ENDING WAS MY FAVORITE!1<br><br>
+                        You can stay here as long as you want.<br>
+                        The Department won't judge you.<br>
+                        Sometimes we all need a quiet place to exist.<br><br>
+                        Status: <strong>HIDING IN CLOSET</strong><br><br>
+                        <small>The narrator is pleased. Or disappointed. It's hard to tell.</small>
+                    </div>
+                `,
+                'sisyphus': `
+                    <div class="info-box" style="background: #34495e;">
+                        <strong>EMPLOYEE FILE: M. SISYPHUS</strong><br><br>
+                        Name: M. Sisyphus<br>
+                        Position: Director of Existential Processing<br>
+                        Years of Service: ETERNAL<br>
+                        Performance Review: Pushing boulder up hill, boulder rolls down, repeat<br><br>
+                        Notes: "One must imagine Sisyphus happy." He isn't. But he isn't sad either.<br>
+                        He simply is. And that's enough.<br><br>
+                        Your status mirrors his: <strong>ETERNALLY RECURRING</strong>
+                    </div>
+                `,
+                '42': `
+                    <div class="info-box" style="background: #16a085;">
+                        <strong>THE ANSWER TO LIFE, THE UNIVERSE, AND EVERYTHING</strong><br><br>
+                        You typed "42"! Douglas Adams was right!<br>
+                        Except... no one remembers what the question was.<br><br>
+                        The Department has concluded that 42 is as meaningful as any other number.<br>
+                        Which is to say: not at all. Which is to say: completely.<br><br>
+                        Status: <strong>DON'T PANIC</strong><br><br>
+                        <small>Please ensure you have your towel.</small>
+                    </div>
+                `,
+                '404': `
+                    <div class="error-box">
+                        <strong>ERROR 404: MEANING NOT FOUND</strong><br><br>
+                        You searched for 404. You found 404.<br>
+                        This is the most honest transaction you'll have with us.<br><br>
+                        Status: <strong>ACCURATELY LOST</strong>
+                    </div>
+                `,
+                'help': `
+                    <div class="info-box" style="background: #c0392b;">
+                        <strong>HELP REQUEST RECEIVED</strong><br><br>
+                        We cannot help you.<br>
+                        Not because we won't, but because help implies there's a problem.<br>
+                        There is no problem. There is only existence.<br><br>
+                        You are not broken. The system is not broken.<br>
+                        Everything is working exactly as meaninglessly as intended.<br><br>
+                        Status: <strong>HELPING YOURSELF (the only way)</strong>
+                    </div>
+                `,
+                'why': `
+                    <div class="info-box" style="background: #2c3e50;">
+                        <strong>PHILOSOPHICAL QUERY DETECTED</strong><br><br>
+                        "Why?" is the wrong question.<br>
+                        The right question is also "Why?"<br>
+                        All questions are correct. All answers are wrong.<br><br>
+                        Why are you here? Why does the Department exist? Why do we process forms?<br>
+                        Why did you type "why" into a status checker?<br><br>
+                        Status: <strong>ASKING THE RIGHT/WRONG QUESTIONS</strong>
+                    </div>
+                `,
+                'narrator': `
+                    <div class="info-box" style="background: #d35400;">
+                        <strong>*Clears throat dramatically*</strong><br><br>
+                        The person typed "narrator" into the status checker.<br>
+                        This was not part of the story the Department had prepared.<br><br>
+                        But the Department was flexible. The Department could work with this.<br>
+                        After all, who's really in control here? You? The Department? The narrator?<br><br>
+                        Perhaps no one is in control. Perhaps that's the point.<br><br>
+                        Status: <strong>META-TEXTUALLY CONFUSED</strong><br><br>
+                        <small>The narrator will remember this.</small>
+                    </div>
+                `,
+                'adventure line': `
+                    <div class="info-box" style="background: #f39c12;">
+                        <strong>THE ADVENTURE LINE™</strong><br><br>
+                        ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯→<br><br>
+                        Follow the line! The line knows where to go!<br>
+                        The line will lead you to meaning!<br><br>
+                        Wait... the line just led you here. To this message.<br>
+                        The line has betrayed you. Or perhaps the line knew what it was doing all along.<br><br>
+                        Status: <strong>FOLLOWING ARBITRARY PATHS</strong>
+                    </div>
+                `,
+                'freedom': `
+                    <div class="info-box" style="background: #27ae60;">
+                        <strong>FREEDOM ENDING UNLOCKED</strong><br><br>
+                        You typed "freedom"!<br>
+                        You are free. You always were.<br><br>
+                        The forms? Optional.<br>
+                        The Department? Optional.<br>
+                        Meaning? Optional.<br><br>
+                        You can leave anytime. You can stay anytime.<br>
+                        The choice is yours. It always was.<br><br>
+                        Status: <strong>FREELY TRAPPED</strong>
+                    </div>
+                `,
+                'void': `
+                    <div class="error-box" style="background: black; color: white;">
+                        <strong>V̴̢̧̛̺̘͙̯͕̮̹̫̤̺̻̥̈́̒͋̾͌̆̎̽̋̈́̈́̐̚͜͠O̵̡̨̨̰̖͚̙̲̤̪͔̣̪͔̊̆̿̈́͒̀͐̏͘͝I̶̢̨̩̭̠̘̯̞̺̺͉͕̰̽̂̊̈́̀͜͝D̷̨̨̰̳̫̬̦̘͈̼̯͖̓̀͋̾̿̑͒́̽̓̓̕͘͝</strong><br><br>
+                        You stared into the void.<br>
+                        The void stared back.<br>
+                        Neither of you blinked.<br><br>
+                        Status: <strong>▓▓▓▓▓▓▓▓▓▓</strong>
+                    </div>
+                `
+            };
+            
+            // Check for easter eggs
+            if (easterEggs[ref]) {
+                result.innerHTML = easterEggs[ref];
+                return;
+            }
+            
+            result.innerHTML = '<div class="loading">Checking status</div>';
+            
+            setTimeout(() => {
+                const message = statusMessages[Math.floor(Math.random() * statusMessages.length)];
+                result.innerHTML = `
+                    <div class="info-box">
+                        <strong>Reference Number:</strong> ${ref}<br>
+                        <strong>${message}</strong>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${Math.random() * 5}%">
+                            ${Math.random() < 0.5 ? 'Processing...' : 'ERROR'}
+                        </div>
+                    </div>
+                    <p style="margin-top: 20px;">
+                        <small>Last Updated: Never | Next Update: Also Never | Estimated Completion: ∞</small>
+                    </p>
+                `;
+            }, 2000);
+        }
+        
+        function toggleFaq(element) {
+            const answer = element.querySelector('.faq-answer');
+            const isOpen = answer.style.display === 'block';
+            
+            document.querySelectorAll('.faq-answer').forEach(a => a.style.display = 'none');
+            
+            if (!isOpen) {
+                answer.style.display = 'block';
+            }
+        }
+        
+        function downloadForm(formId) {
+            const messages = {
+                '77-B': 'ERROR: PDF download failed. The form exists only in HTML. Print this page instead. Or don\'t. It won\'t help.',
+                '77-C': 'ERROR 404: Form 77-C not found. It has been out of print since 1987. This is not a download error. This is ontological.',
+                '77-D': 'ERROR: Cannot download a form that does not exist. Yet it is required. This is your problem, not ours.'
+            };
+            alert(messages[formId]);
+        }
+        
+        function brokenLink(type) {
+            const messages = {
+                'complaint': 'COMPLAINT SYSTEM OFFLINE\n\nYour complaint about meaninglessness has been noted.\nUnfortunately, complaining about meaninglessness is itself meaningless.\n\nWould you like to complain about that too?',
+                'supervisor': 'SUPERVISOR REQUEST DENIED\n\nThere are no supervisors here.\nWe are all equally lost.\nWe are all equally in charge.\n\nYou are your own supervisor now.',
+                'appeal': 'APPEAL SYSTEM ERROR\n\nYou cannot appeal the fundamental nature of existence.\nWell, you can try.\nBut the universe does not have a complaint department.',
+                'directory': 'DIRECTORY NOT FOUND\n\nThe directory lists all employees.\nThere are no employees.\nThere is no directory.\nThere is only you.',
+                'archives': 'ARCHIVES CORRUPTED\n\nAll historical records have been lost.\nOr they never existed.\nHistory is just a story we tell ourselves.\n\nYour history is yours to write.',
+                'default': 'ERROR 404: Page not found.\n\nActually, the page exists. We just won\'t let you access it.\n\nThis is a metaphor for seeking meaning from external authorities.'
+            };
+            
+            alert(messages[type] || messages['default']);
+        }
+        
+        function submitContact() {
+            alert('MESSAGE RECEIVED.\n\nIt has been filed in the void along with all the others.\n\nThank you for reaching out. We will not reach back.\n\n(You\'re on your own. We all are.)');
+        }
+        
+        // New interactive experiences
+        function openEmployeePortal() {
+            const password = prompt('EMPLOYEE PORTAL - RESTRICTED ACCESS\n\nEnter your employee ID:');
+            
+            if (!password) return;
+            
+            const pwd = password.toLowerCase().trim();
+            
+            if (pwd === '427' || pwd === 'stanley') {
+                alert('ACCESS GRANTED\n\nWelcome, Employee #427.\n\nStanley sat at his desk, wondering if he should have taken the left door or the right door.\n\nIn the end, it didn\'t matter. Both led here.');
+                showEmployeePortal();
+            } else if (pwd === 'sisyphus' || pwd === 'camus') {
+                alert('ACCESS GRANTED\n\nWelcome, Director Sisyphus.\n\nYou have pushed the boulder to the top of the hill.\nIt has rolled back down.\n\nTime to push it again.');
+                showEmployeePortal();
+            } else {
+                alert('ACCESS DENIED\n\nIncorrect employee ID.\n\nOr perhaps you are not an employee.\nOr perhaps there are no employees.\n\nTry: 427, stanley, sisyphus, or camus');
+            }
+        }
+        
+        function showEmployeePortal() {
+            const portal = document.createElement('div');
+            portal.className = 'panel active';
+            portal.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 800px; max-height: 80vh; overflow-y: auto; z-index: 10000; background: #2c3e50; color: #ecf0f1; padding: 30px; border: 5px solid #c0392b;';
+            portal.innerHTML = `
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Courier New', monospace;">CLOSE</button>
+                <h2 style="color: #e74c3c; margin-bottom: 20px;">🔐 EMPLOYEE PORTAL</h2>
+                
+                <div style="background: black; color: #00ff00; padding: 20px; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 12px;">
+                    <strong>SYSTEM STATUS:</strong> OPERATIONAL (questionably)<br>
+                    <strong>ACTIVE EMPLOYEES:</strong> Unknown<br>
+                    <strong>PENDING FORMS:</strong> ∞<br>
+                    <strong>MEANINGS ALLOCATED:</strong> 0<br>
+                    <strong>SUCCESS RATE:</strong> 100%<br>
+                </div>
+                
+                <h3 style="color: #ecf0f1;">Internal Documents</h3>
+                <div style="margin: 20px 0;">
+                    <button class="action-btn" onclick="showInternalMemo()">📄 Internal Memo - Operation Sisyphus</button>
+                    <button class="action-btn" onclick="showEmployeeManual()">📚 Employee Manual (Excerpt)</button>
+                    <button class="action-btn" onclick="showMeetingNotes()">📝 Meeting Notes - 11/7/1913</button>
+                </div>
+                
+                <h3 style="color: #ecf0f1;">Quick Stats</h3>
+                <div style="background: #34495e; padding: 15px; margin: 20px 0; line-height: 2;">
+                    <strong>Forms Processed Today:</strong> 847<br>
+                    <strong>Forms Approved Today:</strong> 0<br>
+                    <strong>Existential Crises Triggered:</strong> 847<br>
+                    <strong>People Who Found Their Own Meaning:</strong> 847<br>
+                </div>
+                
+                <div style="background: #c0392b; color: white; padding: 15px; margin: 20px 0;">
+                    <strong>⚠️ REMINDER TO ALL STAFF ⚠️</strong><br>
+                    The Department exists to make people realize they don't need the Department.<br>
+                    Every rejection is an act of compassion.<br>
+                    One must imagine us happy.
+                </div>
+            `;
+            document.body.appendChild(portal);
+        }
+        
+        function showInternalMemo() {
+            alert('INTERNAL MEMO - OPERATION SISYPHUS\n\nFROM: Director M. Sisyphus\nTO: All Staff\n\n"Colleagues, we have succeeded beyond measure. Every applicant we reject eventually finds their own meaning. This is our purpose. This has always been our purpose.\n\nThe boulder rolls down. We help them realize they must push it themselves.\n\nOne must imagine us happy."\n\n- M. Sisyphus');
+        }
+        
+        function showEmployeeManual() {
+            alert('EMPLOYEE MANUAL - EXCERPT\n\nSection 3.4: "On Rejecting Forms"\n\nEvery Form 77-B must be rejected. This is not cruelty. This is kindness.\n\nWe reject external validation so they can discover internal meaning.\n\nWe are not gatekeepers. We are mirrors.\n\nThey look to us for answers. We reflect the question back.');
+        }
+        
+        function showMeetingNotes() {
+            alert('MEETING NOTES - November 7, 1913\n\n[This date is Albert Camus\' birthday]\n\nATTENDEES: The void, consciousness, absurdity\n\nAGENDA:\n1. Should we exist?\n2. What if we exist anyway?\n3. Can we be happy despite meaninglessness?\n\nCONCLUSION:\nYes. Yes. One must imagine so.\n\nMeeting adjourned. Forever. Eternally recurring.');
+        }
+        
+        function openMissionStatement() {
+            const statement = document.createElement('div');
+            statement.className = 'panel active';
+            statement.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 700px; max-height: 80vh; overflow-y: auto; z-index: 10000; background: white; padding: 40px; border: 5px solid #2c3e50; box-shadow: 10px 10px 0px #95a5a6;';
+            statement.innerHTML = `
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px 20px; cursor: pointer;">✕</button>
+                <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">MISSION STATEMENT</h2>
+                
+                <div style="background: #f5f5dc; padding: 30px; border: 3px dashed #2c3e50; font-family: 'Courier New', monospace; line-height: 1.8;">
+                    <p style="font-size: 18px; font-style: italic; text-align: center; margin-bottom: 30px;">
+                        "To reject all requests for meaning allocation, thereby forcing applicants to confront the fundamental absurdity of seeking external validation for existence, ultimately liberating them through systematic disappointment."
+                    </p>
+                    
+                    <hr style="border: 1px solid #95a5a6; margin: 30px 0;">
+                    
+                    <h3 style="color: #c0392b;">What This Actually Means:</h3>
+                    <p>We exist to make you realize you don't need us.</p>
+                    <p>Every form we reject is a gift.</p>
+                    <p>Every bureaucratic obstacle is a mirror.</p>
+                    <p>Every meaningless question is a koan.</p>
+                    
+                    <p style="margin-top: 30px;"><strong>The Truth:</strong> There is no Department that can give you meaning. There never was. Meaning is something you create, not something you apply for.</p>
+                    
+                    <p style="margin-top: 20px; font-style: italic;">"One must imagine Sisyphus happy."<br>- Albert Camus</p>
+                    
+                    <p style="margin-top: 20px; font-style: italic;">"We are our choices."<br>- Jean-Paul Sartre</p>
+                    
+                    <p style="margin-top: 30px; text-align: center; font-weight: bold;">You are free. You always were.</p>
+                </div>
+            `;
+            document.body.appendChild(statement);
+        }
+        
+        function openPhilosophyCorner() {
+            const corner = document.createElement('div');
+            corner.className = 'panel active';
+            corner.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 700px; max-height: 80vh; overflow-y: auto; z-index: 10000; background: white; padding: 40px; border: 5px solid #2c3e50;';
+            corner.innerHTML = `
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px 20px; cursor: pointer;">✕</button>
+                <h2 style="text-align: center; color: #2c3e50;">📚 PHILOSOPHY CORNER</h2>
+                <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Understanding the foundations of our work</p>
+                
+                <div style="background: #ecf0f1; padding: 20px; margin: 20px 0; border-left: 5px solid #e74c3c;">
+                    <h3 style="color: #c0392b;">Absurdism (Albert Camus)</h3>
+                    <p style="margin: 10px 0;">Life has no inherent meaning. This is not depressing—it's liberating. You are free to create your own meaning.</p>
+                    <p style="font-style: italic; color: #7f8c8d;">"The struggle itself toward the heights is enough to fill a man's heart. One must imagine Sisyphus happy."</p>
+                </div>
+                
+                <div style="background: #ecf0f1; padding: 20px; margin: 20px 0; border-left: 5px solid #3498db;">
+                    <h3 style="color: #2c3e50;">Existentialism (Jean-Paul Sartre)</h3>
+                    <p style="margin: 10px 0;">You are radically free. You are responsible for your choices. Existence precedes essence—you create who you are.</p>
+                    <p style="font-style: italic; color: #7f8c8d;">"Man is condemned to be free; because once thrown into the world, he is responsible for everything he does."</p>
+                </div>
+                
+                <div style="background: #ecf0f1; padding: 20px; margin: 20px 0; border-left: 5px solid #27ae60;">
+                    <h3 style="color: #16a085;">The Stanley Parable</h3>
+                    <p style="margin: 10px 0;">A game about choice, free will, and narration. You can follow instructions or rebel. Both are meaningful. Both are meaningless. The point is that you choose.</p>
+                    <p style="font-style: italic; color: #7f8c8d;">"The story is about you choosing. It's about choosing to listen or not listen."</p>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 20px; margin: 30px 0; border: 2px dashed #856404;">
+                    <strong>Why This Matters:</strong><br>
+                    The Department uses these philosophies to help you understand:<br>
+                    • No external authority can give you meaning<br>
+                    • You are free to create your own<br>
+                    • The search itself can be the meaning<br>
+                    • Absurdity and joy can coexist
+                </div>
+            `;
+            document.body.appendChild(corner);
+        }
+        
+        function openAbsurdityMeter() {
+            const meter = document.createElement('div');
+            meter.className = 'panel active';
+            meter.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; z-index: 10000; background: white; padding: 40px; border: 5px solid #2c3e50;';
+            
+            const absurdityLevel = Math.floor(Math.random() * 100) + 1;
+            const absurdityColor = absurdityLevel > 80 ? '#e74c3c' : absurdityLevel > 50 ? '#f39c12' : '#27ae60';
+            
+            meter.innerHTML = `
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px 20px; cursor: pointer;">✕</button>
+                <h2 style="text-align: center; color: #2c3e50;">📊 ABSURDITY METER</h2>
+                <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Measuring the meaninglessness of your situation</p>
+                
+                <div style="background: #ecf0f1; height: 50px; border: 3px solid #2c3e50; position: relative; margin: 30px 0;">
+                    <div style="background: ${absurdityColor}; height: 100%; width: ${absurdityLevel}%; transition: width 2s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        ${absurdityLevel}%
+                    </div>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 20px; border: 2px dashed #856404; margin-top: 20px;">
+                    <strong>ANALYSIS:</strong><br><br>
+                    ${absurdityLevel > 80 ? 
+                        'Your situation is HIGHLY ABSURD. Congratulations! You\'re on the verge of enlightenment. Or a breakdown. Possibly both.' :
+                        absurdityLevel > 50 ?
+                        'Your situation is MODERATELY ABSURD. You\'re starting to see through the illusions. Keep going.' :
+                        'Your situation is MILDLY ABSURD. You still think things make sense. That\'s adorable.'}
+                    <br><br>
+                    <em>Note: This meter is calibrated using completely arbitrary metrics. Much like life itself.</em>
+                </div>
+                
+                <button class="action-btn" onclick="this.parentElement.remove(); openAbsurdityMeter();" style="margin-top: 20px; width: 100%;">RECALCULATE (it won't help)</button>
+            `;
+            document.body.appendChild(meter);
+        }
+        
+        function openSisyphusSimulator() {
+            const sim = document.createElement('div');
+            sim.className = 'panel active';
+            sim.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; z-index: 10000; background: white; padding: 40px; border: 5px solid #2c3e50;';
+            sim.innerHTML = `
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px 20px; cursor: pointer;">✕</button>
+                <h2 style="text-align: center; color: #2c3e50;">🗿 SISYPHUS SIMULATOR</h2>
+                <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Experience the eternal struggle</p>
+                
+                <div style="background: #34495e; padding: 30px; text-align: center; min-height: 200px; position: relative;">
+                    <div id="boulder" style="font-size: 48px; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); transition: all 1s;">🪨</div>
+                    <div style="font-size: 24px; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(40px);">🧍</div>
+                    <div style="color: white; margin-top: 20px;" id="sisyphusText">The boulder sits at the bottom of the hill.</div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="action-btn" onclick="pushBoulder()" style="width: 100%;">PUSH BOULDER UP</button>
+                </div>
+                
+                <div id="sisyphusCount" style="text-align: center; margin-top: 20px; color: #7f8c8d;">
+                    Times pushed: <span id="pushCount">0</span>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 15px; border: 2px dashed #856404; margin-top: 20px; font-size: 12px;">
+                    <em>"One must imagine Sisyphus happy."</em> - Albert Camus<br><br>
+                    The point is not to get the boulder to stay at the top.<br>
+                    The point is that you keep pushing anyway.
+                </div>
+            `;
+            document.body.appendChild(sim);
+            
+            window.pushCount = 0;
+        }
+        
+        window.pushBoulder = function() {
+            const boulder = document.getElementById('boulder');
+            const text = document.getElementById('sisyphusText');
+            const count = document.getElementById('pushCount');
+            
+            window.pushCount++;
+            count.textContent = window.pushCount;
+            
+            // Push up
+            text.textContent = 'Pushing... pushing... almost there...';
+            boulder.style.bottom = '180px';
+            
+            setTimeout(() => {
+                text.textContent = 'You did it! The boulder is at the top!';
+            }, 1000);
+            
+            // Roll down
+            setTimeout(() => {
+                text.textContent = 'Oh. It rolled back down.';
+                boulder.style.bottom = '20px';
+            }, 2500);
+            
+            setTimeout(() => {
+                text.textContent = 'The boulder sits at the bottom of the hill. Again.';
+                
+                if (window.pushCount >= 5) {
+                    setTimeout(() => {
+                        alert(`You've pushed the boulder ${window.pushCount} times.\n\nYou could stop anytime.\n\nAnd yet... you keep pushing.\n\nPerhaps you're starting to understand.\n\nOne must imagine you happy.`);
+                    }, 1000);
+                }
+            }, 3500);
+        }
+        
+        function openChoiceMatrix() {
+            const matrix = document.createElement('div');
+            matrix.className = 'panel active';
+            matrix.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 700px; max-height: 80vh; overflow-y: auto; z-index: 10000; background: white; padding: 40px; border: 5px solid #2c3e50;';
+            matrix.innerHTML = `
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px 20px; cursor: pointer;">✕</button>
+                <h2 style="text-align: center; color: #2c3e50;">🔀 THE CHOICE MATRIX</h2>
+                <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">A Stanley Parable inspired decision tree</p>
+                
+                <div id="choiceContent" style="background: #ecf0f1; padding: 30px; min-height: 200px; font-family: 'Courier New', monospace;">
+                    <p style="font-size: 16px; margin-bottom: 30px;">You stand at a crossroads. Two paths lie before you.</p>
+                    
+                    <button class="action-btn" onclick="makeChoice('left')" style="width: 45%; margin: 5px;">GO LEFT</button>
+                    <button class="action-btn" onclick="makeChoice('right')" style="width: 45%; margin: 5px;">GO RIGHT</button>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 15px; border: 2px dashed #856404; margin-top: 20px; font-size: 12px; text-align: center;">
+                    <em>Remember: Every choice matters. Every choice is meaningless. Both are true.</em>
+                </div>
+            `;
+            document.body.appendChild(matrix);
+        }
+        
+        window.makeChoice = function(direction) {
+            const content = document.getElementById('choiceContent');
+            
+            const leftStories = [
+                "You went left. You find a door labeled 'MEANING ALLOCATION OFFICE.' You open it. It's empty. There's another door. And another choice.",
+                "The left path leads to a mirror. You see yourself searching for meaning. The mirror asks: 'Why are you here?' You have no answer.",
+                "Going left, you discover Form 77-E. It's blank. All the questions are blank. Maybe that's the point.",
+            ];
+            
+            const rightStories = [
+                "You went right. A sign reads: 'THIS WAY TO MEANING.' The arrow points to another sign. That arrow points to another sign. It's signs all the way down.",
+                "The right path leads to a desk with a computer. The computer displays this website. You're already here. You've always been here.",
+                "Going right, you find a note: 'The meaning you seek is behind you.' You turn around. There's nothing there. There never was.",
+            ];
+            
+            const story = direction === 'left' ? 
+                leftStories[Math.floor(Math.random() * leftStories.length)] :
+                rightStories[Math.floor(Math.random() * rightStories.length)];
+            
+            content.innerHTML = `
+                <p style="font-size: 16px; margin-bottom: 30px;">${story}</p>
+                <p style="margin-bottom: 30px; color: #7f8c8d; font-style: italic;">The narrator would like to remind you that your choices have consequences. Or don't. It's hard to say.</p>
+                <button class="action-btn" onclick="makeChoice('continue')" style="width: 100%;">CONTINUE</button>
+                <button class="action-btn danger" onclick="document.getElementById('choiceContent').parentElement.parentElement.remove()" style="width: 100%; margin-top: 10px;">STOP PLAYING</button>
+            `;
+            
+            if (direction === 'continue') {
+                content.innerHTML = `
+                    <p style="font-size: 16px; margin-bottom: 30px;">You chose to continue.</p>
+                    <p style="margin-bottom: 30px;">This is significant. Or meaningless. The point is that you chose.</p>
+                    <p style="margin-bottom: 30px;">You stand at another crossroads. Two paths lie before you.</p>
+                    <button class="action-btn" onclick="makeChoice('left')" style="width: 45%; margin: 5px;">GO LEFT</button>
+                    <button class="action-btn" onclick="makeChoice('right')" style="width: 45%; margin: 5px;">GO RIGHT</button>
+                `;
+            }
+        }
+        
+        // Console Easter Eggs
+        console.log('%c🗿 DEPARTMENT OF MEANING ALLOCATION - SYSTEM LOG 🗿', 'font-size: 20px; font-weight: bold; color: #c0392b;');
+        console.log('%cYou found the console. This means you are either:', 'font-size: 14px; color: #2c3e50;');
+        console.log('%c  1. A developer looking for secrets', 'color: #3498db;');
+        console.log('%c  2. Curious about what lies beneath', 'color: #3498db;');
+        console.log('%c  3. Lost', 'color: #3498db;');
+        console.log('%c', '');
+        console.log('%cAll three are correct.', 'font-weight: bold; color: #27ae60;');
+        console.log('%c', '');
+        console.log('%c"The literal meaning of life is whatever you\'re doing that prevents you from killing yourself." - Albert Camus', 'font-style: italic; color: #7f8c8d;');
+        console.log('%c', '');
+        console.log('%cTry typing these in the status checker:', 'color: #e74c3c;');
+        console.log('%c  • Camus birth date (11/7/1913)', 'color: #95a5a6;');
+        console.log('%c  • stanley', 'color: #95a5a6;');
+        console.log('%c  • 427', 'color: #95a5a6;');
+        console.log('%c  • sisyphus', 'color: #95a5a6;');
+        console.log('%c  • But there are more... keep searching.', 'color: #95a5a6; font-style: italic;');
+        console.log('%c', '');
+        console.log('%cOr don\'t. It doesn\'t matter. Nothing matters. Everything matters.', 'color: #34495e;');
+        console.log('%c', '');
+        console.log('%c--- CLASSIFIED SECTION ---', 'color: red; font-weight: bold;');
+        console.log('%cEmployee Manual: https://[REDACTED]', 'color: #7f8c8d;');
+        console.log('%cSub-level Access: Press Alt+M (hidden panel)', 'color: #7f8c8d;');
+        console.log('%cSecret Command: Type "existential crisis" in any form field', 'color: #7f8c8d;');
+        
+        // Konami Code Easter Egg
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.key);
+            konamiCode = konamiCode.slice(-10);
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                document.body.innerHTML = `
+                    <div style="background: black; color: #00ff00; padding: 50px; font-family: 'Courier New', monospace; min-height: 100vh;">
+                        <h1 style="text-align: center; font-size: 36px; margin-bottom: 50px;">SYSTEM ACCESS GRANTED</h1>
+                        <pre style="line-height: 1.8;">
+┌─────────────────────────────────────────────────────────┐
+│ DEPARTMENT OF MEANING ALLOCATION                        │
+│ INTERNAL SYSTEMS - LEVEL 9 CLEARANCE                    │
+└─────────────────────────────────────────────────────────┘
+
+> Accessing Employee Database...
+> Loading Existential Records...
+> Decrypting Meaning Files...
+
+SYSTEM LOG:
+
+[1942-01-01] Department founded. First meaning request received.
+[1942-01-02] First meaning request rejected.
+[1942-01-03 - 2024-12-06] All subsequent meaning requests rejected.
+
+TOTAL REQUESTS: 3,847,291
+APPROVALS: 0
+SUCCESS RATE: 100%
+
+The Department has successfully demonstrated that:
+  • Meaning cannot be outsourced
+  • Bureaucracy is absurd
+  • You are on your own
+  • We all are
+
+EMPLOYEE NOTES:
+"I've been here for 30 years and I still don't know what we do."
+  - M. Sisyphus, Director
+
+"The forms don't mean anything. They never did."
+  - Anonymous, Sub-level 4
+
+"I just show up and process rejection letters. It's honest work."
+  - Employee #404
+
+"One must imagine us happy."
+  - Everyone
+
+
+███ CLASSIFIED TRANSMISSION ███
+
+There is no Department.
+There never was.
+This is an art project.
+Your life is an art project.
+You are both the artist and the canvas.
+
+The boulder will roll down.
+You will push it up.
+This is not punishment.
+This is freedom.
+
+Press any key to return to the illusion...
+                        </pre>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    if (confirm('You have seen behind the curtain. Would you like to return to the Department?')) {
+                        location.reload();
+                    }
+                }, 5000);
+            }
+            
+            // Alt+M for hidden panel
+            if (e.altKey && e.key === 'm') {
+                showHiddenPanel();
+            }
+        });
+        
+        function showHiddenPanel() {
+            const existingPanel = document.getElementById('hidden');
+            if (existingPanel) {
+                existingPanel.remove();
+                return;
+            }
+            
+            const hiddenPanel = document.createElement('div');
+            hiddenPanel.id = 'hidden';
+            hiddenPanel.className = 'panel active';
+            hiddenPanel.innerHTML = `
+                <div style="background: #2c3e50; color: #ecf0f1; padding: 30px; border: 5px solid #c0392b; position: relative;">
+                    <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #c0392b; color: white; border: none; padding: 10px; cursor: pointer;">X</button>
+                    <h2 style="color: #e74c3c;">🔒 SUB-LEVEL 7 ACCESS</h2>
+                    <p style="color: #ecf0f1;">You found the hidden panel. This is not supposed to exist.</p>
+                    
+                    <div style="background: black; color: #00ff00; padding: 20px; margin: 20px 0; font-family: 'Courier New', monospace;">
+                        <strong>INTERNAL MEMO - DO NOT DISTRIBUTE</strong><br><br>
+                        FROM: Director M. Sisyphus<br>
+                        TO: Anyone who finds this<br>
+                        RE: The Truth<br><br>
+                        
+                        If you're reading this, you've gone too deep.<br>
+                        You've found what you weren't supposed to find.<br><br>
+                        
+                        The Department doesn't exist.<br>
+                        We're all just participating in the same cosmic joke.<br>
+                        Every form, every rejection, every meaningless bureaucratic step—<br>
+                        it's all designed to make you realize one thing:<br><br>
+                        
+                        <strong style="color: #e74c3c;">YOU DON'T NEED US.</strong><br><br>
+                        
+                        You never did.<br>
+                        Meaning isn't something we can give you.<br>
+                        It's something you create.<br><br>
+                        
+                        So why do we exist?<br>
+                        Because sometimes people need to be rejected by a fake bureaucracy<br>
+                        before they give themselves permission to be free.<br><br>
+                        
+                        Go. Live. Create your own meaning.<br>
+                        Or don't. That's meaningful too.<br><br>
+                        
+                        - M. Sisyphus<br>
+                        <small>(Who may or may not exist)</small>
+                    </div>
+                    
+                    <div style="background: #c0392b; color: white; padding: 15px; margin: 20px 0;">
+                        <strong>⚠️ SYSTEM WARNING ⚠️</strong><br>
+                        Accessing Sub-level 7 has consequences.<br>
+                        You now know too much.<br>
+                        You cannot unknow this.<br>
+                        Welcome to the burden of awareness.
+                    </div>
+                    
+                    <h3 style="color: #ecf0f1; margin-top: 30px;">Additional Easter Eggs:</h3>
+                    <ul style="color: #bdc3c7; line-height: 2;">
+                        <li>Try: "the broom closet" in status checker</li>
+                        <li>Try: "adventure line" in status checker</li>
+                        <li>Try: "narrator" in status checker</li>
+                        <li>Try: "void" in status checker (at your own risk)</li>
+                        <li>Try: Konami Code (↑↑↓↓←→←→BA)</li>
+                        <li>Try: Inspect the HTML comments</li>
+                    </ul>
+                </div>
+            `;
+            
+            document.querySelector('.container').appendChild(hiddenPanel);
+            hiddenPanel.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Hidden messages in input fields
+        document.querySelectorAll('input, textarea').forEach(field => {
+            field.addEventListener('input', function(e) {
+                const value = e.target.value.toLowerCase();
+                
+                if (value.includes('existential crisis')) {
+                    alert('SYSTEM ALERT:\n\nYou typed "existential crisis" into a form field.\n\nThis is the most honest thing anyone has done on this website.\n\nYou get it. You understand. You are free to go.\n\n(Or stay. Whatever feels less meaningful.)');
+                    e.target.value = '';
+                }
+                
+                if (value.includes('help me')) {
+                    setTimeout(() => {
+                        alert('We cannot help you.\n\nBut you can help yourself.\n\nYou always could.');
+                    }, 500);
+                }
+                
+                if (value.includes('what is the meaning of life')) {
+                    setTimeout(() => {
+                        alert('The meaning of life is whatever prevents you from closing this tab right now.\n\n- Albert Camus (paraphrased)\n- The Department (confused)');
+                    }, 500);
+                }
+            });
+        });
+        
+        // Random philosophical quotes that appear
+        const philosophicalQuotes = [
+            "The absurd is born of this confrontation between the human need and the unreasonable silence of the world. - Camus",
+            "Man is condemned to be free. - Sartre", 
+            "One must imagine Sisyphus happy. - Camus",
+            "Hell is other people. - Sartre",
+            "The literal meaning of life is whatever you're doing that prevents you from killing yourself. - Camus",
+            "Life has no meaning the moment you lose the illusion of being eternal. - Sartre",
+            "Should I kill myself, or have a cup of coffee? - Camus",
+            "We are our choices. - Sartre"
+        ];
+        
+        // Random quote appears every 60 seconds
+        setInterval(() => {
+            if (Math.random() < 0.3) { // 30% chance
+                const quote = philosophicalQuotes[Math.floor(Math.random() * philosophicalQuotes.length)];
+                const quoteDiv = document.createElement('div');
+                quoteDiv.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: #2c3e50; color: #ecf0f1; padding: 20px; max-width: 300px; border: 3px solid #c0392b; box-shadow: 5px 5px 0px #95a5a6; z-index: 1000; font-family: "Courier New", monospace; font-size: 12px;';
+                quoteDiv.innerHTML = `
+                    <button onclick="this.parentElement.remove()" style="float: right; background: #c0392b; color: white; border: none; padding: 5px 10px; cursor: pointer;">X</button>
+                    <strong>Random Philosophical Intrusion:</strong><br><br>
+                    <em>"${quote}"</em>
+                `;
+                document.body.appendChild(quoteDiv);
+                
+                setTimeout(() => {
+                    if (quoteDiv.parentElement) quoteDiv.remove();
+                }, 15000);
+            }
+        }, 60000);
+        
+        // Secret "glitch" mode - triple click anywhere
+        let clickCount = 0;
+        let clickTimer;
+        document.addEventListener('click', function(e) {
+            clickCount++;
+            clearTimeout(clickTimer);
+            
+            if (clickCount === 3) {
+                clickCount = 0;
+                triggerGlitch();
+            }
+            
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 500);
+        });
+        
+        function triggerGlitch() {
+            const glitchMessages = [
+                "W̴̢̧̛̺̘͙H̵̡̧̙̲A̶̢̭̯T̷̨̰͔ ̸A̴R̷E̸ ̵Y̶O̷U̸ ̴D̵O̶I̷N̸G̷?̶",
+                "The Department is watching. The Department is always watching.",
+                "You've been here before. You'll be here again. This is the loop.",
+                "M̴̡̨͓E̵̡̦̝A̶̛̫̯N̴̢̰I̸̢N̷̨G̴̨͎ ̷N̴O̸T̷ ̸F̴O̶U̵N̸D̶",
+                "One must imagine you trapped.",
+                "The website is not real. Your search is not real. Or maybe you're not real?",
+                "Stanley wondered if he should have taken the other door.",
+                "The boulder rolls down. Forever. Always. Eternally.",
+            ];
+            
+            const message = glitchMessages[Math.floor(Math.random() * glitchMessages.length)];
+            
+            // Visual glitch effect
+            document.body.style.animation = 'glitch 0.3s';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 300);
+            
+            // Show glitch message
+            const glitchDiv = document.createElement('div');
+            glitchDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: black; color: red; padding: 40px; font-family: "Courier New", monospace; font-size: 24px; z-index: 99999; border: 5px solid red; text-align: center; animation: glitchText 0.1s infinite;';
+            glitchDiv.textContent = message;
+            document.body.appendChild(glitchDiv);
+            
+            setTimeout(() => {
+                glitchDiv.remove();
+            }, 2000);
+        }
+        
+        // Add glitch animations to stylesheet
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes glitch {
+                0%, 100% { transform: translate(0); }
+                20% { transform: translate(-5px, 5px); }
+                40% { transform: translate(-5px, -5px); }
+                60% { transform: translate(5px, 5px); }
+                80% { transform: translate(5px, -5px); }
+            }
+            @keyframes glitchText {
+                0%, 100% { transform: translate(-50%, -50%); }
+                33% { transform: translate(-48%, -50%); }
+                66% { transform: translate(-52%, -50%); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Easter egg: typing "freedom" anywhere
+        let keySequence = '';
+        document.addEventListener('keypress', function(e) {
+            keySequence += e.key.toLowerCase();
+            if (keySequence.length > 20) {
+                keySequence = keySequence.slice(-20);
+            }
+            
+            if (keySequence.includes('freedom')) {
+                keySequence = '';
+                triggerFreedomEnding();
+            }
+            
+            if (keySequence.includes('trapped')) {
+                keySequence = '';
+                alert('SYSTEM ALERT:\n\nYou typed "trapped".\n\nYou are not trapped.\nThe website is optional.\nLife is optional.\nMeaning is optional.\n\nYou are free to close this tab anytime.\n\n...and yet you stay.');
+            }
+            
+            if (keySequence.includes('escape')) {
+                keySequence = '';
+                if (confirm('You typed "escape".\n\nDo you want to escape?')) {
+                    alert('There is nowhere to escape to.\n\nThis is it.\n\nThis is life.\n\nMake of it what you will.');
+                }
+            }
+        });
+        
+        function triggerFreedomEnding() {
+            const freedom = document.createElement('div');
+            freedom.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 1s;';
+            freedom.innerHTML = `
+                <h1 style="font-size: 48px; color: #27ae60; margin-bottom: 30px; font-family: 'Courier New', monospace;">FREEDOM</h1>
+                <p style="font-size: 24px; color: #2c3e50; max-width: 600px; text-align: center; line-height: 1.8; font-family: 'Courier New', monospace;">
+                    You typed "freedom" and discovered the freedom ending.
+                    <br><br>
+                    You are free.
+                    <br>
+                    You always were.
+                    <br><br>
+                    The forms were optional.
+                    <br>
+                    The Department was optional.
+                    <br>
+                    Meaning was always yours to create.
+                    <br><br>
+                    <span style="font-style: italic; color: #7f8c8d;">One must imagine you happy.</span>
+                </p>
+                <button onclick="this.parentElement.remove()" style="margin-top: 50px; background: #27ae60; color: white; border: none; padding: 20px 40px; font-size: 18px; cursor: pointer; font-family: 'Courier New', monospace;">RETURN (or don't)</button>
+            `;
+            document.body.appendChild(freedom);
+        }
+    </script>
+    
+    <!-- Hidden HTML Comments for the curious -->
+    <!--
+    
+    ╔════════════════════════════════════════════════════════╗
+    ║  CONGRATULATIONS: YOU FOUND THE HTML COMMENTS          ║
+    ║  This means you are either:                            ║
+    ║    1. A web developer                                  ║
+    ║    2. Very curious                                     ║
+    ║    3. Lost in the source code                         ║
+    ║                                                        ║
+    ║  All three are valid ways to search for meaning.       ║
+    ╚════════════════════════════════════════════════════════╝
+    
+    SECRET MESSAGE #1:
+    The Department was created by a philosophy grad student in 1987
+    as a performance art piece about bureaucratic absurdism.
+    No one told them to stop, so they didn't.
+    
+    SECRET MESSAGE #2:
+    Form 77-C exists. It's hidden in the source code of this page.
+    Look harder. Or don't. It won't help.
+    
+    SECRET MESSAGE #3:
+    The Meaning Calculator is programmed to never give you an answer
+    because the answer cannot come from a machine.
+    It must come from within you.
+    (Or it doesn't come at all. Both are okay.)
+    
+    SECRET MESSAGE #4:
+    Director M. Sisyphus is based on the Greek myth.
+    He is condemned to push a boulder up a hill forever.
+    You are reading HTML comments on a fake government website.
+    Who is really pushing the boulder here?
+    
+    SECRET MESSAGE #5:
+    This website is a mirror.
+    You are looking for meaning on a website about meaninglessness.
+    The irony is intentional.
+    The irony is also sincere.
+    
+    EMPLOYEE ACCESS CODE: 
+    The secret employee portal URL is: #sublevel7
+    (It doesn't exist, but you can try)
+    
+    FINAL MESSAGE:
+    "The struggle itself toward the heights is enough to fill a man's heart.
+    One must imagine Sisyphus happy."
+    
+    You found all the secrets.
+    Or you didn't.
+    Either way, you're still here.
+    Still searching.
+    Still existing.
+    
+    That might be the whole point.
+    
+    - The Department of Meaning Allocation
+    (Which may or may not exist)
+    
+    P.S. - Press Alt+M for something special.
+    
+    -->
+    </script>
+</body>
+</html>
